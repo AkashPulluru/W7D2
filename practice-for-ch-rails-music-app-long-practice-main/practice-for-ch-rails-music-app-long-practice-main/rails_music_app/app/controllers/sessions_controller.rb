@@ -1,7 +1,16 @@
 class SessionsController < ApplicationController
+    before_action require_logged_out, only: [:new, :create]
+    before_action require_logged_in, only: [:destroy]
 
     def create 
-        login! 
+        @user = User.find_by(params[:email],params[:password])
+        if user 
+            login(@user)
+            redirect_to user_url
+        else 
+            redirect_to new_session_url
+            render :new
+        end 
     end 
 
     def new  
@@ -10,12 +19,8 @@ class SessionsController < ApplicationController
     end 
 
     def destroy 
-        if current_user
-            reset_session_token
-            :session_token = nil 
-            logout! 
-        end 
-
+        logout! 
         redirect_to new_session_url
     end 
+
 end 
