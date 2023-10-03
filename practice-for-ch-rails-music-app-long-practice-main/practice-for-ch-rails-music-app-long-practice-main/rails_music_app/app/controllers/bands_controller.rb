@@ -1,4 +1,5 @@
 class BandsController < ApplicationController
+    skip_before_action :verify_authenticity_token
 
     def new 
         render :new
@@ -7,8 +8,8 @@ class BandsController < ApplicationController
     def create
         @band = Band.new(band_params)
 
-        if @band 
-            redirect_to band_url(band_params)
+        if @band.save 
+            redirect_to bands_url(@band)
         else 
             render json: @band.errors.full_messages, status: 422 
         end 
